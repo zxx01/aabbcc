@@ -40,8 +40,7 @@ namespace aabb
         upperBound.resize(dimension);
     }
 
-    AABB::AABB(const std::vector<double>& lowerBound_, const std::vector<double>& upperBound_) :
-        lowerBound(lowerBound_), upperBound(upperBound_)
+    AABB::AABB(const std::vector<double> &lowerBound_, const std::vector<double> &upperBound_) : lowerBound(lowerBound_), upperBound(upperBound_)
     {
         // Validate the dimensionality of the bounds vectors.
         if (lowerBound.size() != upperBound.size())
@@ -50,7 +49,7 @@ namespace aabb
         }
 
         // Validate that the upper bounds exceed the lower bounds.
-        for (unsigned int i=0;i<lowerBound.size();i++)
+        for (unsigned int i = 0; i < lowerBound.size(); i++)
         {
             // Validate the bound.
             if (lowerBound[i] > upperBound[i])
@@ -96,7 +95,7 @@ namespace aabb
         return surfaceArea;
     }
 
-    void AABB::merge(const AABB& aabb1, const AABB& aabb2)
+    void AABB::merge(const AABB &aabb1, const AABB &aabb2)
     {
         assert(aabb1.lowerBound.size() == aabb2.lowerBound.size());
         assert(aabb1.upperBound.size() == aabb2.upperBound.size());
@@ -104,7 +103,7 @@ namespace aabb
         lowerBound.resize(aabb1.lowerBound.size());
         upperBound.resize(aabb1.lowerBound.size());
 
-        for (unsigned int i=0;i<lowerBound.size();i++)
+        for (unsigned int i = 0; i < lowerBound.size(); i++)
         {
             lowerBound[i] = std::min(aabb1.lowerBound[i], aabb2.lowerBound[i]);
             upperBound[i] = std::max(aabb1.upperBound[i], aabb2.upperBound[i]);
@@ -114,20 +113,22 @@ namespace aabb
         centre = computeCentre();
     }
 
-    bool AABB::contains(const AABB& aabb) const
+    bool AABB::contains(const AABB &aabb) const
     {
         assert(aabb.lowerBound.size() == lowerBound.size());
 
-        for (unsigned int i=0;i<lowerBound.size();i++)
+        for (unsigned int i = 0; i < lowerBound.size(); i++)
         {
-            if (aabb.lowerBound[i] < lowerBound[i]) return false;
-            if (aabb.upperBound[i] > upperBound[i]) return false;
+            if (aabb.lowerBound[i] < lowerBound[i])
+                return false;
+            if (aabb.upperBound[i] > upperBound[i])
+                return false;
         }
 
         return true;
     }
 
-    bool AABB::overlaps(const AABB& aabb, bool touchIsOverlap) const
+    bool AABB::overlaps(const AABB &aabb, bool touchIsOverlap) const
     {
         assert(aabb.lowerBound.size() == lowerBound.size());
 
@@ -163,7 +164,7 @@ namespace aabb
     {
         std::vector<double> position(lowerBound.size());
 
-        for (unsigned int i=0;i<position.size();i++)
+        for (unsigned int i = 0; i < position.size(); i++)
             position[i] = 0.5 * (lowerBound[i] + upperBound[i]);
 
         return position;
@@ -189,9 +190,8 @@ namespace aabb
     Tree::Tree(unsigned int dimension_,
                double skinThickness_,
                unsigned int nParticles,
-               bool touchIsOverlap_) :
-        dimension(dimension_), isPeriodic(false), skinThickness(skinThickness_),
-        touchIsOverlap(touchIsOverlap_)
+               bool touchIsOverlap_) : dimension(dimension_), isPeriodic(false), skinThickness(skinThickness_),
+                                       touchIsOverlap(touchIsOverlap_)
     {
         // Validate the dimensionality.
         if ((dimension < 2))
@@ -210,13 +210,13 @@ namespace aabb
         nodes.resize(nodeCapacity);
 
         // Build a linked list for the list of free nodes.
-        for (unsigned int i=0;i<nodeCapacity-1;i++)
+        for (unsigned int i = 0; i < nodeCapacity - 1; i++)
         {
             nodes[i].next = i + 1;
             nodes[i].height = -1;
         }
-        nodes[nodeCapacity-1].next = NULL_NODE;
-        nodes[nodeCapacity-1].height = -1;
+        nodes[nodeCapacity - 1].next = NULL_NODE;
+        nodes[nodeCapacity - 1].height = -1;
 
         // Assign the index of the first free node.
         freeList = 0;
@@ -224,13 +224,12 @@ namespace aabb
 
     Tree::Tree(unsigned int dimension_,
                double skinThickness_,
-               const std::vector<bool>& periodicity_,
-               const std::vector<double>& boxSize_,
+               const std::vector<bool> &periodicity_,
+               const std::vector<double> &boxSize_,
                unsigned int nParticles,
-               bool touchIsOverlap_) :
-        dimension(dimension_), skinThickness(skinThickness_),
-        periodicity(periodicity_), boxSize(boxSize_),
-        touchIsOverlap(touchIsOverlap_)
+               bool touchIsOverlap_) : dimension(dimension_), skinThickness(skinThickness_),
+                                       periodicity(periodicity_), boxSize(boxSize_),
+                                       touchIsOverlap(touchIsOverlap_)
     {
         // Validate the dimensionality.
         if (dimension < 2)
@@ -251,13 +250,13 @@ namespace aabb
         nodes.resize(nodeCapacity);
 
         // Build a linked list for the list of free nodes.
-        for (unsigned int i=0;i<nodeCapacity-1;i++)
+        for (unsigned int i = 0; i < nodeCapacity - 1; i++)
         {
             nodes[i].next = i + 1;
             nodes[i].height = -1;
         }
-        nodes[nodeCapacity-1].next = NULL_NODE;
-        nodes[nodeCapacity-1].height = -1;
+        nodes[nodeCapacity - 1].next = NULL_NODE;
+        nodes[nodeCapacity - 1].height = -1;
 
         // Assign the index of the first free node.
         freeList = 0;
@@ -266,22 +265,22 @@ namespace aabb
         isPeriodic = false;
         posMinImage.resize(dimension);
         negMinImage.resize(dimension);
-        for (unsigned int i=0;i<dimension;i++)
+        for (unsigned int i = 0; i < dimension; i++)
         {
-            posMinImage[i] =  0.5*boxSize[i];
-            negMinImage[i] = -0.5*boxSize[i];
+            posMinImage[i] = 0.5 * boxSize[i];
+            negMinImage[i] = -0.5 * boxSize[i];
 
             if (periodicity[i])
                 isPeriodic = true;
         }
     }
 
-    void Tree::setPeriodicity(const std::vector<bool>& periodicity_)
+    void Tree::setPeriodicity(const std::vector<bool> &periodicity_)
     {
         periodicity = periodicity_;
     }
 
-    void Tree::setBoxSize(const std::vector<double>& boxSize_)
+    void Tree::setBoxSize(const std::vector<double> &boxSize_)
     {
         boxSize = boxSize_;
     }
@@ -298,13 +297,13 @@ namespace aabb
             nodes.resize(nodeCapacity);
 
             // Build a linked list for the list of free nodes.
-            for (unsigned int i=nodeCount;i<nodeCapacity-1;i++)
+            for (unsigned int i = nodeCount; i < nodeCapacity - 1; i++)
             {
                 nodes[i].next = i + 1;
                 nodes[i].height = -1;
             }
-            nodes[nodeCapacity-1].next = NULL_NODE;
-            nodes[nodeCapacity-1].height = -1;
+            nodes[nodeCapacity - 1].next = NULL_NODE;
+            nodes[nodeCapacity - 1].height = -1;
 
             // Assign the index of the first free node.
             freeList = nodeCount;
@@ -334,7 +333,7 @@ namespace aabb
         nodeCount--;
     }
 
-    void Tree::insertParticle(unsigned int particle, std::vector<double>& position, double radius)
+    void Tree::insertParticle(unsigned int particle, std::vector<double> &position, double radius)
     {
         // Make sure the particle doesn't already exist.
         if (particleMap.count(particle) != 0)
@@ -355,7 +354,7 @@ namespace aabb
         std::vector<double> size(dimension);
 
         // Compute the AABB limits.
-        for (unsigned int i=0;i<dimension;i++)
+        for (unsigned int i = 0; i < dimension; i++)
         {
             nodes[node].aabb.lowerBound[i] = position[i] - radius;
             nodes[node].aabb.upperBound[i] = position[i] + radius;
@@ -363,7 +362,7 @@ namespace aabb
         }
 
         // Fatten the AABB.
-        for (unsigned int i=0;i<dimension;i++)
+        for (unsigned int i = 0; i < dimension; i++)
         {
             nodes[node].aabb.lowerBound[i] -= skinThickness * size[i];
             nodes[node].aabb.upperBound[i] += skinThickness * size[i];
@@ -384,7 +383,7 @@ namespace aabb
         nodes[node].particle = particle;
     }
 
-    void Tree::insertParticle(unsigned int particle, std::vector<double>& lowerBound, std::vector<double>& upperBound)
+    void Tree::insertParticle(unsigned int particle, std::vector<double> &lowerBound, std::vector<double> &upperBound)
     {
         // Make sure the particle doesn't already exist.
         if (particleMap.count(particle) != 0)
@@ -405,7 +404,7 @@ namespace aabb
         std::vector<double> size(dimension);
 
         // Compute the AABB limits.
-        for (unsigned int i=0;i<dimension;i++)
+        for (unsigned int i = 0; i < dimension; i++)
         {
             // Validate the bound.
             if (lowerBound[i] > upperBound[i])
@@ -419,7 +418,7 @@ namespace aabb
         }
 
         // Fatten the AABB.
-        for (unsigned int i=0;i<dimension;i++)
+        for (unsigned int i = 0; i < dimension; i++)
         {
             nodes[node].aabb.lowerBound[i] -= skinThickness * size[i];
             nodes[node].aabb.upperBound[i] += skinThickness * size[i];
@@ -496,7 +495,7 @@ namespace aabb
         particleMap.clear();
     }
 
-    bool Tree::updateParticle(unsigned int particle, std::vector<double>& position, double radius,
+    bool Tree::updateParticle(unsigned int particle, std::vector<double> &position, double radius,
                               bool alwaysReinsert)
     {
         // Validate the dimensionality of the position vector.
@@ -510,7 +509,7 @@ namespace aabb
         std::vector<double> upperBound(dimension);
 
         // Compute the AABB limits.
-        for (unsigned int i=0;i<dimension;i++)
+        for (unsigned int i = 0; i < dimension; i++)
         {
             lowerBound[i] = position[i] - radius;
             upperBound[i] = position[i] + radius;
@@ -520,8 +519,8 @@ namespace aabb
         return updateParticle(particle, lowerBound, upperBound, alwaysReinsert);
     }
 
-    bool Tree::updateParticle(unsigned int particle, std::vector<double>& lowerBound,
-                              std::vector<double>& upperBound, bool alwaysReinsert)
+    bool Tree::updateParticle(unsigned int particle, std::vector<double> &lowerBound,
+                              std::vector<double> &upperBound, bool alwaysReinsert)
     {
         // Validate the dimensionality of the bounds vectors.
         if ((lowerBound.size() != dimension) && (upperBound.size() != dimension))
@@ -551,7 +550,7 @@ namespace aabb
         std::vector<double> size(dimension);
 
         // Compute the AABB limits.
-        for (unsigned int i=0;i<dimension;i++)
+        for (unsigned int i = 0; i < dimension; i++)
         {
             // Validate the bound.
             if (lowerBound[i] > upperBound[i])
@@ -566,13 +565,14 @@ namespace aabb
         AABB aabb(lowerBound, upperBound);
 
         // No need to update if the particle is still within its fattened AABB.
-        if (!alwaysReinsert && nodes[node].aabb.contains(aabb)) return false;
+        if (!alwaysReinsert && nodes[node].aabb.contains(aabb))
+            return false;
 
         // Remove the current leaf.
         removeLeaf(node);
 
         // Fatten the new AABB.
-        for (unsigned int i=0;i<dimension;i++)
+        for (unsigned int i = 0; i < dimension; i++)
         {
             aabb.lowerBound[i] -= skinThickness * size[i];
             aabb.upperBound[i] += skinThickness * size[i];
@@ -603,7 +603,7 @@ namespace aabb
         return query(particle, nodes[particleMap.find(particle)->second].aabb);
     }
 
-    std::vector<unsigned int> Tree::query(unsigned int particle, const AABB& aabb)
+    std::vector<unsigned int> Tree::query(unsigned int particle, const AABB &aabb)
     {
         std::vector<unsigned int> stack;
         stack.reserve(256);
@@ -619,13 +619,14 @@ namespace aabb
             // Copy the AABB.
             AABB nodeAABB = nodes[node].aabb;
 
-            if (node == NULL_NODE) continue;
+            if (node == NULL_NODE)
+                continue;
 
             if (isPeriodic)
             {
                 std::vector<double> separation(dimension);
                 std::vector<double> shift(dimension);
-                for (unsigned int i=0;i<dimension;i++)
+                for (unsigned int i = 0; i < dimension; i++)
                     separation[i] = nodeAABB.centre[i] - aabb.centre[i];
 
                 bool isShifted = minimumImage(separation, shift);
@@ -633,7 +634,7 @@ namespace aabb
                 // Shift the AABB.
                 if (isShifted)
                 {
-                    for (unsigned int i=0;i<dimension;i++)
+                    for (unsigned int i = 0; i < dimension; i++)
                     {
                         nodeAABB.lowerBound[i] += shift[i];
                         nodeAABB.upperBound[i] += shift[i];
@@ -664,7 +665,7 @@ namespace aabb
         return particles;
     }
 
-    std::vector<unsigned int> Tree::query(const AABB& aabb)
+    std::vector<unsigned int> Tree::query(const AABB &aabb)
     {
         // Make sure the tree isn't empty.
         if (particleMap.size() == 0)
@@ -676,7 +677,7 @@ namespace aabb
         return query(std::numeric_limits<unsigned int>::max(), aabb);
     }
 
-    const AABB& Tree::getAABB(unsigned int particle)
+    const AABB &Tree::getAABB(unsigned int particle)
     {
         return nodes[particleMap[particle]].aabb;
     }
@@ -698,7 +699,7 @@ namespace aabb
         while (!nodes[index].isLeaf())
         {
             // Extract the children of the node.
-            unsigned int left  = nodes[index].left;
+            unsigned int left = nodes[index].left;
             unsigned int right = nodes[index].right;
 
             double surfaceArea = nodes[index].aabb.getSurfaceArea();
@@ -748,11 +749,14 @@ namespace aabb
             }
 
             // Descend according to the minimum cost.
-            if ((cost < costLeft) && (cost < costRight)) break;
+            if ((cost < costLeft) && (cost < costRight))
+                break;
 
             // Descend.
-            if (costLeft < costRight) index = left;
-            else                      index = right;
+            if (costLeft < costRight)
+                index = left;
+            else
+                index = right;
         }
 
         unsigned int sibling = index;
@@ -767,8 +771,10 @@ namespace aabb
         // The sibling was not the root.
         if (oldParent != NULL_NODE)
         {
-            if (nodes[oldParent].left == sibling) nodes[oldParent].left = newParent;
-            else                                  nodes[oldParent].right = newParent;
+            if (nodes[oldParent].left == sibling)
+                nodes[oldParent].left = newParent;
+            else
+                nodes[oldParent].right = newParent;
 
             nodes[newParent].left = sibling;
             nodes[newParent].right = leaf;
@@ -816,14 +822,18 @@ namespace aabb
         unsigned int grandParent = nodes[parent].parent;
         unsigned int sibling;
 
-        if (nodes[parent].left == leaf) sibling = nodes[parent].right;
-        else                            sibling = nodes[parent].left;
+        if (nodes[parent].left == leaf)
+            sibling = nodes[parent].right;
+        else
+            sibling = nodes[parent].left;
 
         // Destroy the parent and connect the sibling to the grandparent.
         if (grandParent != NULL_NODE)
         {
-            if (nodes[grandParent].left == parent) nodes[grandParent].left = sibling;
-            else                                   nodes[grandParent].right = sibling;
+            if (nodes[grandParent].left == parent)
+                nodes[grandParent].left = sibling;
+            else
+                nodes[grandParent].right = sibling;
 
             nodes[sibling].parent = grandParent;
             freeNode(parent);
@@ -883,14 +893,16 @@ namespace aabb
             // The node's old parent should now point to its right-hand child.
             if (nodes[right].parent != NULL_NODE)
             {
-                if (nodes[nodes[right].parent].left == node) nodes[nodes[right].parent].left = right;
+                if (nodes[nodes[right].parent].left == node)
+                    nodes[nodes[right].parent].left = right;
                 else
                 {
                     assert(nodes[nodes[right].parent].right == node);
                     nodes[nodes[right].parent].right = right;
                 }
             }
-            else root = right;
+            else
+                root = right;
 
             // Rotate.
             if (nodes[rightLeft].height > nodes[rightRight].height)
@@ -936,14 +948,16 @@ namespace aabb
             // The node's old parent should now point to its left-hand child.
             if (nodes[left].parent != NULL_NODE)
             {
-                if (nodes[nodes[left].parent].left == node) nodes[nodes[left].parent].left = left;
+                if (nodes[nodes[left].parent].left == node)
+                    nodes[nodes[left].parent].left = left;
                 else
                 {
                     assert(nodes[nodes[left].parent].right == node);
                     nodes[nodes[left].parent].right = left;
                 }
             }
-            else root = left;
+            else
+                root = left;
 
             // Rotate.
             if (nodes[leftLeft].height > nodes[leftRight].height)
@@ -984,7 +998,8 @@ namespace aabb
     {
         assert(node < nodeCapacity);
 
-        if (nodes[node].isLeaf()) return 0;
+        if (nodes[node].isLeaf())
+            return 0;
 
         unsigned int height1 = computeHeight(nodes[node].left);
         unsigned int height2 = computeHeight(nodes[node].right);
@@ -994,7 +1009,8 @@ namespace aabb
 
     unsigned int Tree::getHeight() const
     {
-        if (root == NULL_NODE) return 0;
+        if (root == NULL_NODE)
+            return 0;
         return nodes[root].height;
     }
 
@@ -1006,7 +1022,7 @@ namespace aabb
     unsigned int Tree::computeMaximumBalance() const
     {
         unsigned int maxBalance = 0;
-        for (unsigned int i=0; i<nodeCapacity; i++)
+        for (unsigned int i = 0; i < nodeCapacity; i++)
         {
             if (nodes[i].height <= 1)
                 continue;
@@ -1022,14 +1038,16 @@ namespace aabb
 
     double Tree::computeSurfaceAreaRatio() const
     {
-        if (root == NULL_NODE) return 0.0;
+        if (root == NULL_NODE)
+            return 0.0;
 
         double rootArea = nodes[root].aabb.computeSurfaceArea();
         double totalArea = 0.0;
 
-        for (unsigned int i=0; i<nodeCapacity;i++)
+        for (unsigned int i = 0; i < nodeCapacity; i++)
         {
-            if (nodes[i].height < 0) continue;
+            if (nodes[i].height < 0)
+                continue;
 
             totalArea += nodes[i].aabb.computeSurfaceArea();
         }
@@ -1063,10 +1081,11 @@ namespace aabb
         std::vector<unsigned int> nodeIndices(nodeCount);
         unsigned int count = 0;
 
-        for (unsigned int i=0;i<nodeCapacity;i++)
+        for (unsigned int i = 0; i < nodeCapacity; i++)
         {
             // Free node.
-            if (nodes[i].height < 0) continue;
+            if (nodes[i].height < 0)
+                continue;
 
             if (nodes[i].isLeaf())
             {
@@ -1074,7 +1093,8 @@ namespace aabb
                 nodeIndices[count] = i;
                 count++;
             }
-            else freeNode(i);
+            else
+                freeNode(i);
         }
 
         while (count > 1)
@@ -1082,11 +1102,11 @@ namespace aabb
             double minCost = std::numeric_limits<double>::max();
             int iMin = -1, jMin = -1;
 
-            for (unsigned int i=0;i<count;i++)
+            for (unsigned int i = 0; i < count; i++)
             {
                 AABB aabbi = nodes[nodeIndices[i]].aabb;
 
-                for (unsigned int j=i+1;j<count;j++)
+                for (unsigned int j = i + 1; j < count; j++)
                 {
                     AABB aabbj = nodes[nodeIndices[j]].aabb;
                     AABB aabb;
@@ -1115,7 +1135,7 @@ namespace aabb
             nodes[index1].parent = parent;
             nodes[index2].parent = parent;
 
-            nodeIndices[jMin] = nodeIndices[count-1];
+            nodeIndices[jMin] = nodeIndices[count - 1];
             nodeIndices[iMin] = parent;
             count--;
         }
@@ -1127,9 +1147,11 @@ namespace aabb
 
     void Tree::validateStructure(unsigned int node) const
     {
-        if (node == NULL_NODE) return;
+        if (node == NULL_NODE)
+            return;
 
-        if (node == root) assert(nodes[node].parent == NULL_NODE);
+        if (node == root)
+            assert(nodes[node].parent == NULL_NODE);
 
         unsigned int left = nodes[node].left;
         unsigned int right = nodes[node].right;
@@ -1154,7 +1176,8 @@ namespace aabb
 
     void Tree::validateMetrics(unsigned int node) const
     {
-        if (node == NULL_NODE) return;
+        if (node == NULL_NODE)
+            return;
 
         unsigned int left = nodes[node].left;
         unsigned int right = nodes[node].right;
@@ -1179,7 +1202,7 @@ namespace aabb
         AABB aabb;
         aabb.merge(nodes[left].aabb, nodes[right].aabb);
 
-        for (unsigned int i=0;i<dimension;i++)
+        for (unsigned int i = 0; i < dimension; i++)
         {
             assert(aabb.lowerBound[i] == nodes[node].aabb.lowerBound[i]);
             assert(aabb.upperBound[i] == nodes[node].aabb.upperBound[i]);
@@ -1189,9 +1212,9 @@ namespace aabb
         validateMetrics(right);
     }
 
-    void Tree::periodicBoundaries(std::vector<double>& position)
+    void Tree::periodicBoundaries(std::vector<double> &position)
     {
-        for (unsigned int i=0;i<dimension;i++)
+        for (unsigned int i = 0; i < dimension; i++)
         {
             if (position[i] < 0)
             {
@@ -1207,24 +1230,24 @@ namespace aabb
         }
     }
 
-    bool Tree::minimumImage(std::vector<double>& separation, std::vector<double>& shift)
+    bool Tree::minimumImage(std::vector<double> &separation, std::vector<double> &shift)
     {
         bool isShifted = false;
 
-        for (unsigned int i=0;i<dimension;i++)
+        for (unsigned int i = 0; i < dimension; i++)
         {
             if (separation[i] < negMinImage[i])
             {
-                separation[i] += periodicity[i]*boxSize[i];
-                shift[i] = periodicity[i]*boxSize[i];
+                separation[i] += periodicity[i] * boxSize[i];
+                shift[i] = periodicity[i] * boxSize[i];
                 isShifted = true;
             }
             else
             {
                 if (separation[i] >= posMinImage[i])
                 {
-                    separation[i] -= periodicity[i]*boxSize[i];
-                    shift[i] = -periodicity[i]*boxSize[i];
+                    separation[i] -= periodicity[i] * boxSize[i];
+                    shift[i] = -periodicity[i] * boxSize[i];
                     isShifted = true;
                 }
             }
