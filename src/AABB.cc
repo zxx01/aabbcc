@@ -616,11 +616,11 @@ namespace aabb
             unsigned int node = stack.back();
             stack.pop_back();
 
-            // Copy the AABB.
-            AABB nodeAABB = nodes[node].aabb;
-
             if (node == NULL_NODE)
                 continue;
+
+            // Copy the AABB.
+            AABB nodeAABB = nodes[node].aabb;
 
             if (isPeriodic)
             {
@@ -684,6 +684,7 @@ namespace aabb
 
     void Tree::insertLeaf(unsigned int leaf)
     {
+        // If the tree is empty, the leaf node to be inserted will become the root node of the tree.
         if (root == NULL_NODE)
         {
             root = leaf;
@@ -692,7 +693,6 @@ namespace aabb
         }
 
         // Find the best sibling for the node.
-
         AABB leafAABB = nodes[leaf].aabb;
         unsigned int index = root;
 

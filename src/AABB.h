@@ -36,11 +36,11 @@
 #include <unordered_map>
 #include <vector>
 
-/// Null node flag.
-const unsigned int NULL_NODE = 0xffffffff;
-
 namespace aabb
 {
+    /// Null node flag.
+    const unsigned int NULL_NODE = 0xffffffff;
+
     /*! \brief The axis-aligned bounding box object.
 
         Axis-aligned bounding boxes (AABBs) store information for the minimum
